@@ -1,0 +1,140 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Team member employee profile",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth User ID",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Employee display name",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "description": "Employee email address",
+          "maxLength": 120
+        },
+        "role": {
+          "type": "string",
+          "description": "Job title or company role",
+          "maxLength": 60
+        },
+        "department": {
+          "type": "string",
+          "description": "Department name",
+          "maxLength": 50
+        },
+        "avatarColor": {
+          "type": "string",
+          "description": "Hex or theme color for avatar",
+          "maxLength": 30
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile photo URL",
+          "maxLength": 500
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp ISO string when user joined",
+          "maxLength": 40
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp ISO string when user was updated",
+          "maxLength": 40
+        }
+      },
+      "required": ["uid", "displayName", "email"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Task created and tracked by team members",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the owner who created and manages the task",
+          "maxLength": 128
+        },
+        "userName": {
+          "type": "string",
+          "description": "Display name of task owner",
+          "maxLength": 100
+        },
+        "userPhoto": {
+          "type": "string",
+          "description": "Photo URL or avatar indicator of task owner",
+          "maxLength": 500
+        },
+        "title": {
+          "type": "string",
+          "description": "Task title summary",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed task instructions or notes",
+          "maxLength": 2000
+        },
+        "category": {
+          "type": "string",
+          "description": "Business department or tag (e.g. Operations, Sales, Customer Support, Admin)",
+          "maxLength": 50
+        },
+        "priority": {
+          "type": "string",
+          "description": "Priority level: low, medium, high, urgent",
+          "enum": ["low", "medium", "high", "urgent"],
+          "maxLength": 20
+        },
+        "completed": {
+          "type": "boolean",
+          "description": "Whether the task has been completed"
+        },
+        "pointsAwarded": {
+          "type": "number",
+          "description": "Points value for completing this task (1 point)"
+        },
+        "teamId": {
+          "type": "string",
+          "description": "Shared workspace identifier for team leaderboard",
+          "maxLength": 50
+        },
+        "completedAt": {
+          "type": "string",
+          "description": "Timestamp when completed",
+          "maxLength": 40
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when task was created",
+          "maxLength": 40
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when task was last updated",
+          "maxLength": 40
+        }
+      },
+      "required": ["userId", "userName", "title", "completed", "pointsAwarded", "teamId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Public employee directory profiles for team members"
+    },
+    "/tasks/{taskId}": {
+      "schema": "Task",
+      "description": "Team tasks with completion status and point values"
+    }
+  }
+}

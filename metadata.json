@@ -1,0 +1,6 @@
+{
+  "name": "TeamSync Task & Points Tracker",
+  "description": "A collaborative small business task tracker with Google sign-in, personal task management, and a live team points leaderboard powered by Firestore.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

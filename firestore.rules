@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Health / connection test document check
+    match /test/connection {
+      allow get: if true;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() <= 128 &&
+             data.displayName is string && data.displayName.size() <= 100 &&
+             data.email is string && data.email.size() <= 120;
+    }
+
+    function isValidTask(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.userName is string && data.userName.size() <= 100 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
+             data.completed is bool &&
+             data.pointsAwarded is number &&
+             data.teamId is string && data.teamId.size() <= 50;
+    }
+
+    // User profiles for employee directory and leaderboard
+    match /users/{userId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(userId) && isValidUser(request.resource.data) &&
+        (request.auth.uid == userId || request.resource.data.isSample == true);
+      allow update: if isSignedIn() && isValidId(userId) && isValidUser(request.resource.data) &&
+        (request.auth.uid == userId || resource.data.isSample == true);
+      allow delete: if isSignedIn() && (request.auth.uid == userId || resource.data.isSample == true);
+    }
+
+    // Tasks created and tracked by employees
+    match /tasks/{taskId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(taskId) && isValidTask(request.resource.data) &&
+        (request.resource.data.userId == request.auth.uid || request.resource.data.isSample == true);
+      allow update: if isSignedIn() && isValidId(taskId) && isValidTask(request.resource.data) &&
+        (resource.data.userId == request.auth.uid || resource.data.isSample == true);
+      allow delete: if isSignedIn() && isValidId(taskId) &&
+        (resource.data.userId == request.auth.uid || resource.data.isSample == true);
+    }
+  }
+}
